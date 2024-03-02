@@ -29,6 +29,7 @@ class revoluteDH
     public:
         revoluteDH(double d = 0, 
             double a = 0, 
+            double alpha = 0,
             double offset = 0, 
             double* qlim = nullptr, 
             bool flip = false);
