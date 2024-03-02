@@ -18,13 +18,13 @@
         // std::cout << Tep << "\n";
         // std::cout << std::endl;
 
-        double *np_Te = (double *)PyMem_RawCalloc(16, sizeof(double));
+        double *np_Te = new double[16];
         MapMatrix4dc Te(np_Te);
 
-        double *np_J = (double *)PyMem_RawCalloc(6 * ets->n, sizeof(double));
+        double *np_J = new double[6 * ets->n];
         Eigen::Map<Eigen::MatrixXd> J(np_J, 6, ets->n);
 
-        double *np_e = (double *)PyMem_RawCalloc(6, sizeof(double));
+        double *np_e = new double[6];
         MapVectorX e(np_e, 6);
 
         Matrix6dc We;
@@ -120,7 +120,7 @@
             _rand_q(ets, q);
         }
 
-        free(np_e);
-        free(np_Te);
-        free(np_J);
+        delete[] np_Te;
+        delete[] np_J;
+        delete[] np_e; 
     }
