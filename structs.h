@@ -30,8 +30,17 @@ struct ETS
         double *q_range2;
 };
 
-struct ET
+// dummy function
+static void noop(double* /*data*/, double /*eta*/) {}
+double arr[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+class ET
 {
+public:
+        ET(int isstaticsym, int isjoint, int isflip, int jindex,
+         int axis, double *T, double *glim, 
+        void (*op)(double *data, double eta) = noop, 
+        MapMatrix4dc Tm = Eigen::Map<Matrix4dc>(arr));
+
         int isstaticsym; /* this ET is static and has a symbolic value */
         int isjoint;
         int isflip;
