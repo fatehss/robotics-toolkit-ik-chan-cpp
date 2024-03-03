@@ -17,7 +17,7 @@
 class revoluteDH
 {
     private:
-        double d,a,offset;
+        double d,a,offset, alpha;
         bool flip;
 
         void Rx();
