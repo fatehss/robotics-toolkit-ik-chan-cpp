@@ -7,6 +7,81 @@
 #include <Eigen/Dense>
 #include <math.h>
 
+void _rand_q(ETS *ets, MapVectorX q)
+{
+    Eigen::Map<Eigen::ArrayXd> qlim_l(ets->qlim_l, ets->n);
+    Eigen::Map<Eigen::ArrayXd> q_range2(ets->q_range2, ets->n);
+
+    q = VectorX::Random(ets->n);
+
+    q = (q.array() + 1) * q_range2;
+    q = q.array() + qlim_l;
+
+    // return q;
+}
+
+int _check_lim(ETS *ets, MapVectorX q)
+{
+    for (int i = 0; i < ets->n; i++)
+    {
+        if (q(i) < ets->qlim_l[i] || q(i) > ets->qlim_h[i])
+        {
+            // std::cout << "Joint limit: " << q.transpose() << "  :  " << q(i) << "\n";
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+    void _angle_axis(MapMatrix4dc Te, Matrix4dc Tep, MapVectorX e)
+    {
+        double li_norm, R_tr, ang;
+        Matrix3dc R;
+        Vector3 li;
+
+        // e[:3] = Tep[:3, 3] - Te[:3, 3]
+        e.block<3, 1>(0, 0) = Tep.block<3, 1>(0, 3) - Te.block<3, 1>(0, 3);
+
+        // R = Tep.R @ T.R.T
+        // R = Tep[:3, :3] @ T[:3, :3].T
+        R = Tep.block<3, 3>(0, 0) * Te.block<3, 3>(0, 0).transpose();
+
+        // li = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]]);
+        li << R(2, 1) - R(1, 2), R(0, 2) - R(2, 0), R(1, 0) - R(0, 1);
+
+        // if base.iszerovec(li)
+        li_norm = li.norm();
+
+        R_tr = R.trace();
+        if (li_norm < 1e-6)
+        {
+            // diagonal matrix case
+            // if np.trace(R) > 0
+            if (R_tr > 0)
+            {
+                // (1,1,1) case
+                // a = np.zeros((3, ));
+                e.block<3, 1>(3, 0) << 0, 0, 0;
+            }
+            else
+            {
+                // a = np.pi / 2 * (np.diag(R) + 1);
+                e(3) = PI_2 * (R(0, 0) + 1);
+                e(4) = PI_2 * (R(1, 1) + 1);
+                e(5) = PI_2 * (R(2, 2) + 1);
+            }
+        }
+        else
+        {
+            // non-diagonal matrix case
+            // a = math.atan2(li_norm, np.trace(R) - 1) * li / li_norm
+            ang = atan2(li_norm, R_tr - 1);
+            e.block<3, 1>(3, 0) = ang * li / li_norm;
+        }
+    }
+
+
 void _IK_LM_Chan(
     ETS *ets, Matrix4dc Tep,
     MapVectorX q0, int ilimit, int slimit, double tol, int reject_jl,

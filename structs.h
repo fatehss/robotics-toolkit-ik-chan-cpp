@@ -14,6 +14,26 @@
 
 #include "linalg.h"
 
+
+// dummy function
+static void noop(double* /*data*/, double /*eta*/) {}
+struct ET
+{
+        int isstaticsym; /* this ET is static and has a symbolic value */
+        int isjoint;
+        int isflip;
+        int jindex;
+        int axis;
+        double *T;    /* link static transform */
+        double *qlim; /* joint limits */
+        void (*op)(double *data, double eta);
+
+        // #ifdef __cplusplus
+        // Eigen::Map<Eigen::Matrix<double, 4, 4, Eigen::RowMajor>> Tm;
+        MapMatrix4dc Tm;
+        // #endif /* __cplusplus */
+};
+
 struct ETS
 {
         /**********************************************************
@@ -29,34 +49,6 @@ struct ETS
         double *qlim_h;
         double *q_range2;
 };
-
-// dummy function
-static void noop(double* /*data*/, double /*eta*/) {}
-double arr[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-class ET
-{
-public:
-        ET(int isstaticsym, int isjoint, int isflip, int jindex,
-         int axis, double *T, double *glim, 
-        void (*op)(double *data, double eta) = noop, 
-        MapMatrix4dc Tm = Eigen::Map<Matrix4dc>(arr));
-
-        int isstaticsym; /* this ET is static and has a symbolic value */
-        int isjoint;
-        int isflip;
-        int jindex;
-        int axis;
-        double *T;    /* link static transform */
-        double *qlim; /* joint limits */
-        void (*op)(double *data, double eta);
-
-        // #ifdef __cplusplus
-        // Eigen::Map<Eigen::Matrix<double, 4, 4, Eigen::RowMajor>> Tm;
-        MapMatrix4dc Tm;
-        // #endif /* __cplusplus */
-
-};
-
 
 
 #endif

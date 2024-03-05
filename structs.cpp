@@ -1,6 +1,6 @@
 /* structs.cpp */
+/*
 
-#include "structs.h"
 // #include <Eigen/Dense>
 double arr[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 ET::ET(int _isstaticsym, int _isjoint, int _isflip, int _jindex,
@@ -10,3 +10,6 @@ ET::ET(int _isstaticsym, int _isjoint, int _isflip, int _jindex,
         isstaticsym(_isstaticsym), isjoint(_isjoint), isflip(_isflip), jindex(_jindex), op(op), Tm(_Tm)
         { }
 
+
+*/
+#include "structs.h"
