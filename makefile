@@ -10,22 +10,13 @@ LDFLAGS =
 # Source files
 SOURCES = ik.cpp linalg.cpp main.cpp methods.cpp new_methods.cpp structs.cpp
 
-# Object files
-OBJECTS = $(SOURCES:.cpp=.o)
-
 # Executable name
 EXEC = myExecutable
 
 # Default target
-all: $(EXEC)
+all:
+	$(CXX) $(CXXFLAGS) $(SOURCES) $(LDFLAGS) -o $(EXEC)
 
-$(EXEC): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^
-
-# To obtain object files
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# To remove generated files
+# To remove generated executable
 clean:
-	rm -f $(EXEC) $(OBJECTS)
+	rm -f $(EXEC)

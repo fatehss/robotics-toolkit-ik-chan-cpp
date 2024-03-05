@@ -13,3 +13,17 @@ ET::ET(int _isstaticsym, int _isjoint, int _isflip, int _jindex,
 
 */
 #include "structs.h"
+
+
+void op(double* data, double eta)
+{
+        //first need to add (informally) sin(eta) cos(eta) to the matrix
+        //T[0] *= sin(eta);
+
+
+
+}
+
+
+
+
