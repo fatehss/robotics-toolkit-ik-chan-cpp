@@ -36,16 +36,18 @@ int main() {
     //Create dh matrix (without eta params) for each link
     for (int i=0; i<n; ++i)
     {
-        T_matrices[i][0] = 1; T_matrices[i][1] = -cos(alpha[i]); T_matrices[i][2] = sin(alpha[i]); T_matrices[i][3] = a[i];
+        //TODO: This is initializing columnwise instead of rowwise. fix it!
+        T_matrices[i][0] = 1; T_matrices[i][4] = -cos(alpha[i]); T_matrices[i][8] = sin(alpha[i]); T_matrices[i][12] = a[i];
 
-        T_matrices[i][4] = 1; T_matrices[i][5] = cos(alpha[i]); T_matrices[i][6] = -sin(alpha[i]); T_matrices[i][7] = a[i];
+        T_matrices[i][1] = 1; T_matrices[i][5] = cos(alpha[i]); T_matrices[i][9] = -sin(alpha[i]); T_matrices[i][13] = a[i];
 
-        T_matrices[i][8] = 0; T_matrices[i][9] = sin(alpha[i]); T_matrices[i][10] = cos(alpha[i]); T_matrices[i][11] = d[i];
+        T_matrices[i][2] = 0; T_matrices[i][6] = sin(alpha[i]); T_matrices[i][10] = cos(alpha[i]); T_matrices[i][14] = d[i];
 
-        T_matrices[i][12] = 0; T_matrices[i][13] = 0; T_matrices[i][14] = 0; T_matrices[i][15] = 1;
+        T_matrices[i][3] = 0; T_matrices[i][7] = 0; T_matrices[i][11] = 0; T_matrices[i][15] = 1;
+
+
 
     }
-
 
     double qlims[6][2] = {
         {-1.0*PI, 1.0*PI},  // First joint limits
@@ -66,32 +68,25 @@ int main() {
 
     double qlim_l[6]={qlims[0][0],qlims[1][0],qlims[2][0],qlims[3][0],qlims[4][0],qlims[5][0] } ;
     double qlim_h[6]={qlims[0][1],qlims[1][1],qlims[2][1],qlims[3][1],qlims[4][1],qlims[5][1] } ;
+    double offsets[6] = {0,-PI_2,0,0,0,0};
     // Example data for initialization
     // isstaticsym should be 0
     // isjoint should be 1
     // jindex should be i
     // axis =?
 
-    /*
-    ET et_arr[6] = {
-        {0,1,0,0, 0, T_matrices[0], qlims[0], op, MapMatrix4dc(T_matrices[0])},
-        {0,1,0,1, 0, T_matrices[1], qlims[1], op, MapMatrix4dc(T_matrices[1])},
-        {0,1,0,2, 0, T_matrices[2], qlims[2], op, MapMatrix4dc(T_matrices[2])},
-        {0,1,0,3, 0, T_matrices[3], qlims[3], op, MapMatrix4dc(T_matrices[3])},
-        {0,1,0,4, 0, T_matrices[4], qlims[4], op, MapMatrix4dc(T_matrices[4])},
-        {0,1,0,5, 0, T_matrices[5], qlims[5], op, MapMatrix4dc(T_matrices[5])},
-    };
-    */
 
     ET** ets = new ET*[n];
 
     for (int i=0; i<n; ++i){
-        ets[i] = new ET {0,1,0,i, 0, T_matrices[i], qlims[i], noop, MapMatrix4dc(T_matrices[i])};
+        ets[i] = new ET {0,1,0,i, 2, offsets[i],T_matrices[i], qlims[i], MapMatrix4dc(T_matrices[i])};
     }
 
     ETS *ets_instance = new ETS{ets, n, m, qlim_l, qlim_h, q_range2};
 
-
+    for (int i =0; i<n; ++i){
+        //std::cout<< ets[i]->Tm<<"\n\n\n";
+    }
     
 //______________________________________________________________________________________________________________________
 //                  IK_LM_Chan stuff
@@ -124,35 +119,26 @@ So, the Tep should be
 */
     //Target end effector pose
     Eigen::Matrix4d Tep;
-    Tep << 0.9743240, -0.2112438, -0.0779023, 0.65170,
-        0.0952528,  0.7002522, -0.7075124, 1.55176,
-        0.2040089,  0.6819260,  0.7023941, 5.46487,
-        0,          0,          0,         1;
+    Tep << 0.9743,   -0.2033,    0.09673,   0.06517,
+        0.2112,    0.6768,   -0.7052,    0.1552,
+        0.0779,    0.7075,    0.7024,    0.5465,
+        0,         0,         0,         1;
 
+    //std::cout<<"TEP\n\n\n\n\n\n\n"<<Tep<<"\n___________________\n";
     // initial q0 guess
-    double q_initial[6] = {
-    66.805 * M_PI / 180.0, 
-    5.220 * M_PI / 180.0, 
-    -24.885 * M_PI / 180.0, 
-    104.846 * M_PI / 180.0, 
-    0.792 * M_PI / 180.0, 
-    -3.758 * M_PI / 180.0
-    };
+    double q_initial[6] = {1.16596721, 0.09110619, -0.43432518, 1.82990791, 0.01382301, -0.06558947};
 
     MapVectorX q0 = MapVectorX(q_initial, 6);
+
     int ilimit = 30;
     int slimit = 100;
     double tol = 0.000001;
     int reject_jl = 1;
 
-    struct IKResults {
-    Eigen::VectorXd q; // Assuming MapVectorX can be replaced by Eigen::VectorXd for C++
-    int it;
-    int search;
-    int solution;
-    double E;
-};
-    IKResults results = {Eigen::VectorXd::Zero(6), 0, 0, 0, 0.0};
+
+
+
+
     double q_temp[6] = {0,0,0,0,0,0};
     MapVectorX q = MapVectorX(q_temp, 6);
     int *it = new int(0);
@@ -173,6 +159,11 @@ So, the Tep should be
               << "Final Error Value: " << *E << "\n"
               << "Damping Factor (Lambda): " << lambda << "\n"
               << "Weighting Vector: " << we << std::endl;
+
+    for (int i =0; i<n; ++i){
+        //std::cout<< ets[i]->Tm<<'\n';
+    }
+
     delete ets_instance;
     for (int i = 0; i < n; ++i) {
     delete[] ets[i]; // Delete each row

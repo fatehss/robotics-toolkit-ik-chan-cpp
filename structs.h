@@ -17,7 +17,6 @@
 
 // dummy function
 static void noop(double* /*data*/, double /*eta*/){};
-void op(double* /*data*/, double /*eta*/);
 /**
  * @struct ET
  * @brief Represents an elementary transformation (ET) with kinematic and geometric parameters.
@@ -33,12 +32,14 @@ public:
     int isflip;      /**< Flag indicating if the joint axis is flipped. */
     int jindex;      /**< Index of the joint in a kinematic chain. */
     int axis;        /**< Axis of the joint transformation. */
+    double offset;
     double *T;       /**< Pointer to the link's static transformation matrix. */
     double *qlim;    /**< Pointer to the joint limits array. */
-    void (*op)(double *data, double eta); /**< Pointer to a function that operates on data with parameter eta. */
+    
     
     MapMatrix4dc Tm; /**< Eigen::Map wrapping an Eigen::Matrix for the transformation, providing easy matrix operations. */
-
+    
+    void op(double *data, double eta); /**< Pointer to a function that operates on data with parameter eta. */
 };
 
 /**

@@ -19,4 +19,4 @@ all:
 
 # To remove generated executable
 clean:
-	rm -f $(EXEC)
+	rm -f $(EXEC) *.o
