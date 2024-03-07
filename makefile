@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -g -I.
 LDFLAGS =
 
 # Source files
-SOURCES = ik.cpp linalg.cpp main.cpp methods.cpp new_methods.cpp structs.cpp
+SOURCES = ik.cpp linalg.cpp main.cpp methods.cpp structs.cpp
 
 # Executable name
 EXEC = myExecutable

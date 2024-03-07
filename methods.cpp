@@ -159,7 +159,7 @@ void _ETS_fkine(ETS *ets, double *q, double *base, double *tool, MapMatrix4dc &e
         e_ret = current;
     }
 }
-int count = 0; // DELETE THIS
+
 void _ET_T(ET *et, double *ret, double eta)
 {
     // Check if static and return static transform
@@ -175,24 +175,7 @@ void _ET_T(ET *et, double *ret, double eta)
     }
 
     // // Calculate ET trasform based on eta
-    // // DELETE THIS
-    // if (count < 6){
-    // //std::cout<<"matrix\n"<<et->Tm<<'\n';
-    // std::cout<<"results before\n";
-    // for (int i = 0; i < 16; ++i) {
-    // std::cout << "ret[" << i << "] = " << ret[i] << '\n';
-    // }
-    // }
 
     et->op(ret, eta);
 
-    // // DELETE THIS
-    // if (count < 6){
-    // //std::cout<<"matrix\n"<<et->Tm<<'\n';
-    // std::cout<<"results after\n";
-    // for (int i = 0; i < 16; ++i) {
-    // std::cout << "ret[" << i << "] = " << ret[i] << '\n';
-    // }
-    // }
-    // ++count;
 }

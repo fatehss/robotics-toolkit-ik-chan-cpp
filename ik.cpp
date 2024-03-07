@@ -94,9 +94,12 @@ void _IK_LM_Chan(
     // std::cout << std::endl;
 
     double *np_Te = new double[16];
+
+    // Te stores current arrangement
     MapMatrix4dc Te(np_Te);
 
     double *np_J = new double[6 * ets->n];
+    // J is for jacobian
     Eigen::Map<Eigen::MatrixXd> J(np_J, 6, ets->n);
 
     double *np_e = new double[6];
@@ -169,7 +172,6 @@ void _IK_LM_Chan(
 
             // Jacobian Matric J
             _ETS_jacob0(ets, q.data(), (double *)NULL, J);
-
             // Weighting matrix Wn
             Wn = lambda * *E * EyeN;
 
@@ -178,7 +180,6 @@ void _IK_LM_Chan(
 
             // Work out the joint velocity qd
             q += (J.transpose() * We * J + Wn).inverse() * g;
-            // q += (J.transpose() * We * J + Wn).colPivHouseholderQr().solve(g);
 
             iter += 1;
         }

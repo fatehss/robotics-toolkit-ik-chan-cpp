@@ -16,7 +16,6 @@
 
 
 // dummy function
-static void noop(double* /*data*/, double /*eta*/){};
 /**
  * @struct ET
  * @brief Represents an elementary transformation (ET) with kinematic and geometric parameters.
@@ -32,7 +31,7 @@ public:
     int isflip;      /**< Flag indicating if the joint axis is flipped. */
     int jindex;      /**< Index of the joint in a kinematic chain. */
     int axis;        /**< Axis of the joint transformation. */
-    double offset;
+    double offset;   /**< The eta offset of the link.*/
     double *T;       /**< Pointer to the link's static transformation matrix. */
     double *qlim;    /**< Pointer to the joint limits array. */
     
@@ -60,20 +59,5 @@ struct ETS
     double *q_range2;/**< Cached range values for the joints, used for computational efficiency in algorithms like inverse kinematics. */
 };
 
-/*
-#include <cmath> // For cos(), sin()
-
-// Function to compute the transformation matrix for a joint, given its DH parameters and theta
-Eigen::Matrix4d computeDHMatrix(double theta, double d, double a, double alpha) {
-    Eigen::Matrix4d T;
-    T << cos(theta), -sin(theta) * cos(alpha),  sin(theta) * sin(alpha), a * cos(theta),
-         sin(theta),  cos(theta) * cos(alpha), -cos(theta) * sin(alpha), a * sin(theta),
-         0,            sin(alpha),              cos(alpha),             d,
-         0,            0,                       0,                      1;
-    return T;
-}
-
-
-*/
 
 #endif
